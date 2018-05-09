@@ -1,1 +1,1 @@
-# appulsim
+Appulse Battle Simulator [Live demo](https://appulsim.herokuapp.com/)
