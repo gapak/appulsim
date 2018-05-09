@@ -15,13 +15,13 @@ export const fleets = [
    // /*
 
     {player: 'blue',        color: '#aaaaff', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 4, battleship: 2, titan: 0}},
-    {player: 'magenta1',    color: '#ee77ee', fleet: {frigate: 0, cruiser: 0, battlecruiser: 8, dreadnought: 0, battleship: 2, titan: 0}},
+    {player: 'magenta1',    color: '#ee77ee', fleet: {frigate: 0, cruiser: 0, battlecruiser: 4, dreadnought: 0, battleship: 2, titan: 0}},
     {player: 'magenta2',    color: '#ffaaff', fleet: {frigate: 0, cruiser: 8, battlecruiser: 0, dreadnought: 0, battleship: 2, titan: 0}},
     {player: 'green',       color: '#aaffaa', fleet: {frigate: 16, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 2, titan: 0}},
-    {player: 'deep_blue',   color: '#88bbbb', fleet: {frigate: 0, cruiser: 0, battlecruiser: 8, dreadnought: 4, battleship: 0, titan: 0}},
+    {player: 'deep_blue',   color: '#88bbbb', fleet: {frigate: 0, cruiser: 0, battlecruiser: 4, dreadnought: 4, battleship: 0, titan: 0}},
     {player: 'light_blue',  color: '#aaffff', fleet: {frigate: 0, cruiser: 8, battlecruiser: 0, dreadnought: 4, battleship: 0, titan: 0}},
     {player: 'yellow',      color: '#ffffaa', fleet: {frigate: 16, cruiser: 0, battlecruiser: 0, dreadnought: 4, battleship: 0, titan: 0}},
-    {player: 'dark_red',    color: '#ee8888', fleet: {frigate: 16, cruiser: 0, battlecruiser: 8, dreadnought: 0, battleship: 0, titan: 0}},
+    {player: 'dark_red',    color: '#ee8888', fleet: {frigate: 16, cruiser: 0, battlecruiser: 4, dreadnought: 0, battleship: 0, titan: 0}},
     {player: 'red',         color: '#ffaaaa', fleet: {frigate: 16, cruiser: 8, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 0}},
 
     {player: 'white',       color: '#efefef', fleet: {frigate: 8, cruiser: 4, battlecruiser: 1, dreadnought: 1, battleship: 1, titan: 0}},
