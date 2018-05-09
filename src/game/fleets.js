@@ -3,13 +3,17 @@ import _ from 'lodash';
 import {getShip} from '../game/ships';
 
 export const fleets = [
+
+
     {player: 'dark',       color: '#555555', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 2}},
     {player: 'grey2',       color: '#888888', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 4, titan: 0}},
     {player: 'grey3',       color: '#aaaaaa', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 8, battleship: 0, titan: 0}},
     {player: 'grey4',         color: '#bbbbbb', fleet: {frigate: 0, cruiser: 0, battlecruiser: 8, dreadnought: 0, battleship: 0, titan: 0}},
     {player: 'grey5',       color: '#cccccc', fleet: {frigate: 0, cruiser: 16, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 0}},
     {player: 'grey6',       color: '#eeeeee', fleet: {frigate: 32, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 0}},
-    
+
+   // /*
+
     {player: 'blue',        color: '#aaaaff', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 4, battleship: 2, titan: 0}},
     {player: 'magenta1',    color: '#ee77ee', fleet: {frigate: 0, cruiser: 0, battlecruiser: 8, dreadnought: 0, battleship: 2, titan: 0}},
     {player: 'magenta2',    color: '#ffaaff', fleet: {frigate: 0, cruiser: 8, battlecruiser: 0, dreadnought: 0, battleship: 2, titan: 0}},
@@ -30,6 +34,8 @@ export const fleets = [
     {player: 'lojmax',      color: '#ff00ff', fleet: {frigate: 4, cruiser: 2, battlecruiser: 1, dreadnought: 1, battleship: 0, titan: 1}},
     {player: 'aldekein',    color: '#aa66bb', fleet: {frigate: 0, cruiser: 4, battlecruiser: 0, dreadnought: 0, battleship: 3, titan: 0}},
     {player: 'Mira',        color: '#0ABAB5', fleet: {frigate: 0, cruiser: 0, battlecruiser: 3, dreadnought: 1, battleship: 0, titan: 1}},
+   // */
+
 ];
 
 export const getRandomFleet = () => {

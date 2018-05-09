@@ -12,7 +12,7 @@ import {frame} from './game/frame';
 import {tick} from './game/tick';
 
 import {ships} from './game/ships';
-import {getFleet, getRandomFleet} from './game/fleets';
+import {getFleet, getFleets, getRandomFleet} from './game/fleets';
 import {shop} from './game/shop';
 
 
@@ -64,6 +64,7 @@ class App extends Component {
         localStorage.setItem(game_name+"_app_state", null);
         let new_state = getDefaultState();
         new_state.ships_in_battle = getRandomFleet();
+        //new_state.ships_in_battle = getFleets();
         this.setState(new_state);
         this.playGame(new_state.game_speed_multiplier);
     }
@@ -191,7 +192,7 @@ class App extends Component {
                 <h2>Appulse Battle Simulator</h2>
                 <div className="row">
                     <div className="col-sm-3 flex-container-column">
-                        <h3><button className={(_.sum(_.values(this.state.player_ships)) > 0 ? 'btn btn-danger' : 'btn btn-danger disabled')}
+                        <h3><button className={(_.sum(_.values(this.state.player_ships)) > 0 || true ? 'btn btn-danger' : 'btn btn-danger disabled')}
                                     onClick={() => {
                                         let player_fleet = getFleet({player: 'Player', color: '#ffffff', fleet: this.state.player_ships});
                                         this.setState({

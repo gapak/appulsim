@@ -10,7 +10,7 @@ const default_state = {
     points: 32,
 
     player_ships: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 0},
-   // ships_in_battle: getFleets(),
+ //   ships_in_battle: getFleets(),
     ships_in_battle: getRandomFleet(),
     messages: [],
     battle_step: 'start',
