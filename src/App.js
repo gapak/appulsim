@@ -153,7 +153,10 @@ class App extends Component {
 
         return (
             <div className="App">
-                <div className="flex-element flex-container-row">
+                <div className="flex-element flex-container-column">
+
+                    <h2>Appulse Battle Simulator</h2>
+
                     <div className="flex-element">
                         <h4>Round: {this.state.tick} Turn: {this.state.frame} </h4>
                     </div>
@@ -180,17 +183,9 @@ class App extends Component {
                             })}
                         </span>
                     </div>
-
-                    <div className="flex-element">
-                        {this.state.matrix_show}
-                    </div>
                 </div>
 
-                <h2>Appulse Battle Simulator</h2>
-
-
                 <div className="container theme-showcase" role="main">
-
                     <div className="row">
                         <div className="col-sm-3 flex-container-column">
                             <h3><button className={(_.sum(_.values(this.state.player_fleet)) > 0 || true ? 'btn btn-danger' : 'btn btn-danger disabled')}
