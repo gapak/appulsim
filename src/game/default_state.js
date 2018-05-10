@@ -1,17 +1,19 @@
 
 import _ from 'lodash';
 
-import {getFleets, getRandomFleet} from '../game/fleets';
+import {getFleets, getBattle, getRandomFleet, getRendomBattle} from '../game/fleets';
 
 const default_state = {
 
     matrix_show: '',
 
+    player_name: "ThePlayer",
+    player_color: "#fafafa",
     points: 32,
 
-    player_ships: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 0},
- //   ships_in_battle: getFleets(),
-    ships_in_battle: getRandomFleet(),
+    player_fleet: [],
+    in_battle_fleets: {},
+
     messages: [],
     battle_step: 'start',
 
@@ -25,5 +27,7 @@ const default_state = {
 };
 
 export const getDefaultState = () => {
-    return _.cloneDeep(default_state);
+    let state = _.cloneDeep(default_state);
+    state.in_battle_fleets = getRendomBattle(); //getBattle();
+    return state;
 };

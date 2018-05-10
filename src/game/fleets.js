@@ -5,14 +5,16 @@ import {getShip} from '../game/ships';
 export const fleets = [
 
 
-    {player: 'dark',       color: '#555555', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 2}},
+    {player: 'dark',        color: '#555555', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 2}},
     {player: 'grey2',       color: '#888888', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 4, titan: 0}},
     {player: 'grey3',       color: '#aaaaaa', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 8, battleship: 0, titan: 0}},
-    {player: 'grey4',         color: '#bbbbbb', fleet: {frigate: 0, cruiser: 0, battlecruiser: 8, dreadnought: 0, battleship: 0, titan: 0}},
+    {player: 'grey4',       color: '#bbbbbb', fleet: {frigate: 0, cruiser: 0, battlecruiser: 8, dreadnought: 0, battleship: 0, titan: 0}},
     {player: 'grey5',       color: '#cccccc', fleet: {frigate: 0, cruiser: 16, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 0}},
     {player: 'grey6',       color: '#eeeeee', fleet: {frigate: 32, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 0}},
 
-   // /*
+
+//{player: 'another_blue',color: '#33ffee', fleet: {frigate: 16, cruiser: 0, battlecruiser: 4, dreadnought: 0, battleship: 0, titan: 0}},
+    ///*
 
     {player: 'blue',        color: '#aaaaff', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 4, battleship: 2, titan: 0}},
     {player: 'magenta1',    color: '#ee77ee', fleet: {frigate: 0, cruiser: 0, battlecruiser: 4, dreadnought: 0, battleship: 2, titan: 0}},
@@ -20,6 +22,7 @@ export const fleets = [
     {player: 'green',       color: '#aaffaa', fleet: {frigate: 16, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 2, titan: 0}},
     {player: 'deep_blue',   color: '#88bbbb', fleet: {frigate: 0, cruiser: 0, battlecruiser: 4, dreadnought: 4, battleship: 0, titan: 0}},
     {player: 'light_blue',  color: '#aaffff', fleet: {frigate: 0, cruiser: 8, battlecruiser: 0, dreadnought: 4, battleship: 0, titan: 0}},
+    {player: 'another_blue',color: '#33ffee', fleet: {frigate: 0, cruiser: 8, battlecruiser: 4, dreadnought: 0, battleship: 0, titan: 0}},
     {player: 'yellow',      color: '#ffffaa', fleet: {frigate: 16, cruiser: 0, battlecruiser: 0, dreadnought: 4, battleship: 0, titan: 0}},
     {player: 'dark_red',    color: '#ee8888', fleet: {frigate: 16, cruiser: 0, battlecruiser: 4, dreadnought: 0, battleship: 0, titan: 0}},
     {player: 'red',         color: '#ffaaaa', fleet: {frigate: 16, cruiser: 8, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 0}},
@@ -34,7 +37,7 @@ export const fleets = [
     {player: 'lojmax',      color: '#ff00ff', fleet: {frigate: 4, cruiser: 2, battlecruiser: 1, dreadnought: 1, battleship: 0, titan: 1}},
     {player: 'aldekein',    color: '#aa66bb', fleet: {frigate: 0, cruiser: 4, battlecruiser: 0, dreadnought: 0, battleship: 3, titan: 0}},
     {player: 'Mira',        color: '#0ABAB5', fleet: {frigate: 0, cruiser: 0, battlecruiser: 3, dreadnought: 1, battleship: 0, titan: 1}},
-   // */
+    //*/
 
 ];
 
@@ -51,6 +54,7 @@ export const getFleets = () => {
 };
 
 export const getFleet = (fleet) => {
+  //  console.log('getFleet', fleet);
     let ships = [];
         _.each(fleet.fleet, (ship_count, ship_name) => {
             for (let i = 0; i < ship_count; i++) {
@@ -58,4 +62,25 @@ export const getFleet = (fleet) => {
             }
     });
     return ships;
+};
+
+export const getBattle = () => {
+    let in_battle_fleets = [];
+    _.each(fleets, (fleet) => {
+        let builded_fleet = _.clone(fleet);
+        builded_fleet.fleet = getFleet(builded_fleet);
+        in_battle_fleets[fleet.player] = builded_fleet;
+    });
+ //   console.log(in_battle_fleets);
+    return in_battle_fleets;
+};
+
+export const getRendomBattle = () => {
+    let in_battle_fleets = [];
+    let fleet = _.sample(fleets);
+    let builded_fleet = _.clone(fleet);
+    builded_fleet.fleet = getFleet(builded_fleet);
+    in_battle_fleets[fleet.player] = builded_fleet;
+//   console.log(in_battle_fleets);
+    return in_battle_fleets;
 };

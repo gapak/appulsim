@@ -8,31 +8,47 @@ export const rules = {
         onTick: (state) => {
             if (state.battle_step !== 'battle') return state;
 
-            state.ships_in_battle.forEach((ship, id) => {
-                state.ships_in_battle[id].fireAtFrame = ship.hp > 0 ? state.frame + _.random(0, 59) : false;
-            });
+        //    console.log('battle tick', state.in_battle_fleets);
 
+            _.forEach(_.keys(state.in_battle_fleets), (fleet_id) => {
+                let fleet = state.in_battle_fleets[fleet_id];
+             //   console.log(fleet_id, fleet);
+                _.forEach(_.keys(fleet.fleet), (ship_id) => {
+                    let ship = state.in_battle_fleets[fleet_id].fleet[ship_id];
+              //     console.log(fleet_id, ship_id, ship);
+                    state.in_battle_fleets[fleet_id].fleet[ship_id].fireAtFrame = ship.hp > 0 ? state.frame + _.random(0, 59) : false;
+                });
+            });
             return state;
         },
 
         onFrame: (state) => {
             if (state.battle_step !== 'battle') return state;
 
-            let ships_order = _.shuffle(_.filter(state.ships_in_battle, function(ship) { return (ship.fireAtFrame === state.frame && ship.hp > 0); }));
+            let ships_list = [];
+            
+            _.forEach(_.keys(state.in_battle_fleets), (fleet_id) => {
+                let fleet = state.in_battle_fleets[fleet_id];
+                ships_list = ships_list.concat(_.filter(fleet.fleet, function(ship) { return (ship.fireAtFrame === state.frame && ship.hp > 0); }));
+            });
 
-        //    console.log(ships_order);
+            let ships_order = _.shuffle(ships_list);
+
+         //   console.log(ships_order);
 
             ships_order.forEach((ship, bad_id) => {
-                let ship_id = _.indexOf(state.ships_in_battle, ship);
-                state.ships_in_battle[ship_id].fireAtFrame = false;
+                let player_id = ship.player;
+                let ship_id = _.indexOf(state.in_battle_fleets[player_id].fleet, ship);
+                state.in_battle_fleets[player_id].fleet[ship_id].fireAtFrame = false;
                 if (ship.hp < 1) return false;
 
                 for (let i = 0; i < ship.rof; i++) {
                     let target = findTarget(state, ship.player);
+
                     if (target === false) {
                         state.battle_step = 'end';
 
-                        let points = _.sumBy(state.ships_in_battle, function(ship) { return ship.hp > 0 ? ship.points : 0; });
+                        let points = _.sumBy(state.in_battle_fleets[player_id].fleet, function(ship) { return ship.hp > 0 ? ship.points : 0; });
 
                         state.messages.unshift({
                             background: "white",
@@ -40,12 +56,14 @@ export const rules = {
                         return state;
                     }
                     else {
-                        //console.log(target);
-                        let dmg = ship.dmg - state.ships_in_battle[target].armor;
-                        state.ships_in_battle[target].hp -= dmg;
+                        let opponent_id = target.player;
+                        let target_id = _.indexOf(state.in_battle_fleets[opponent_id].fleet, target);
+                     //   console.log(target);
+                        let dmg = ship.dmg - target.armor;
+                        state.in_battle_fleets[opponent_id].fleet[target_id].hp -= dmg;
                         state.messages.unshift({
-                            background: "linear-gradient(to right, " + state.ships_in_battle[ship_id].color + " , " + state.ships_in_battle[target].color + ")",
-                            text: ship.type + " shot to " + state.ships_in_battle[target].type + " and deal " + dmg});
+                            background: "linear-gradient(to right, " + state.in_battle_fleets[player_id].fleet[ship_id].color + " , " + state.in_battle_fleets[opponent_id].color + ")",
+                            text: ship.type + " shot to " + state.in_battle_fleets[opponent_id].fleet[target_id].type + " and deal " + dmg});
                     }
                 }
 
@@ -58,13 +76,25 @@ export const rules = {
 
 
 function findTarget(state, player) {
-    let targets = _.filter(state.ships_in_battle, function(ship) { return (ship.player !== player && ship.hp > 0); });
+    let fleets_list = _.filter(_.values(state.in_battle_fleets), function(fleet) { return _.filter(fleet.fleet, (ship) =>  { return (ship.player !== player && ship.hp > 0); }).length > 0; });
+
+  //  console.log("findTarget", player, fleets_list, state.in_battle_fleets);
+
+    if (fleets_list.length === 0) return false;
+
+    let targets = [];
+
+    let fleet = _.sample(fleets_list);// state.in_battle_fleets[fleet_id];
+
+    _.forEach(_.keys(fleet.fleet), (ship_id) => {
+        let ship = state.in_battle_fleets[fleet.player].fleet[ship_id];
+        if (ship.player !== player && ship.hp > 0) {
+            targets.push(ship);
+        }
+    });
+
+  //  console.log("findTarget", fleet, targets);
+
     if (targets.length === 0) return false;
-    let target = _.sample(targets);
-    let target_id = _.indexOf(state.ships_in_battle, target);
-
- //   console.log(targets, target, target_id);
-
-    return target_id;
-    //return _.findIndex(state.ships_in_battle, function(ship) { return (ship.player !== player && ship.hp > 0); });
+    return _.sample(targets);
 }
