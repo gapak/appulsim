@@ -1,9 +1,8 @@
 
 import _ from 'lodash';
-import {getShip} from '../game/ships';
+import {ships, getShip} from '../game/ships';
 
 export const fleets = [
-
 
     {player: 'dark',        color: '#555555', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 0, titan: 2}},
     {player: 'grey2',       color: '#888888', fleet: {frigate: 0, cruiser: 0, battlecruiser: 0, dreadnought: 0, battleship: 4, titan: 0}},
@@ -84,3 +83,25 @@ export const getRendomBattle = () => {
 //   console.log(in_battle_fleets);
     return in_battle_fleets;
 };
+
+export const generateSingleEnemyFleet = () => {
+    let fleet = {player: 'Enemy', color: '#'+_.random(42, 99)+''+_.random(42, 99)+''+_.random(42, 99), fleet: []};
+    let points = 32;
+
+    while(points > 0) {
+        let ship_key = _.sample(_.keys(ships));
+        if (ships[ship_key].points <= points && _.random(1, ships[ship_key].points) <= _.random(1, 2)) {
+            points -= ships[ship_key].points;
+            fleet.fleet.push(getShip(ship_key, fleet));
+        }
+    }
+    fleet.fleet = sortFleet(fleet.fleet);
+    return fleet;
+};
+
+
+export const sortFleet = (fleet) => {
+    return _.orderBy(fleet, ['points', 'dmg'], ['desc', 'desc']);
+};
+
+

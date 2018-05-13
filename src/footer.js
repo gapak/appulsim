@@ -4,14 +4,11 @@ import {social_links, support} from './game/app_config';
 
 
 class Footer extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return (
             <div className="footer">
-                <span className="pull-left"><a href="#" onClick={this.props.newGame} title='Hard Reset For Developers'>New game</a></span>
+                <span className="pull-left"><a onClick={this.props.newGame} title='Hard Reset For Developers'>New game</a></span>
 
                 &nbsp;
                 <a target="_blank" rel="noopener noreferrer" href={social_links.telegram}>

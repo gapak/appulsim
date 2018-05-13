@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import Footer from './footer.js'
 
 import './css/App.css';
@@ -11,8 +11,8 @@ import {getDefaultState} from './game/default_state';
 import {frame} from './game/frame';
 import {tick} from './game/tick';
 
-import {ships, getShip} from './game/ships';
-import {getFleet, getFleets, getRandomFleet} from './game/fleets';
+import {ships} from './game/ships';
+import {sortFleet} from './game/fleets';
 import {shop} from './game/shop';
 
 
@@ -130,8 +130,6 @@ class App extends Component {
 
 
     render() {
-        let state = this.state;
-
 
         const tooltip = (state, item) =>
             <Tooltip id="tooltip">
@@ -153,52 +151,12 @@ class App extends Component {
 
         return (
             <div className="App">
-                <div className="flex-element flex-container-column">
-
-                    <h2>Appulse Battle Simulator</h2>
-
-                    <div className="flex-element">
-                        <h4>Round: {this.state.tick} Turn: {this.state.frame} </h4>
-                    </div>
-
-                    <div className="flex-element">
-                        <span onClick={() => {
-                            if (this.state.game_paused) {
-                                this.playGame();
-                            } else {
-                                this.pauseGame();
-                            }
-                        }}>
-                            <span className={classNames('glyphicon', (this.state.game_paused ? 'glyphicon-play' : 'glyphicon-pause'))} style={{width: 28, height: 28}}></span>
-                        </span>
-                        <span>
-                            {[1, 2, 4, 8, 16, 32, 64].map((speed, index) => {
-                                return <span key={index}>
-                                    {this.state.game_speed_multiplier === speed
-                                        ? <button className="" style={{width: 42, height: 28}}><u>{{0: 'x1', 1: 'x2', 2: 'x4', 3: 'x8', 4: 'x16', 5: 'x32', 6: 'x64'}[index]}</u></button>
-                                        : <button className="" style={{width: 42, height: 28}} onClick={() => {
-                                        this.setGameSpeed(speed); }}>{{0: 'x1', 1: 'x2', 2: 'x4', 3: 'x8', 4: 'x16', 5: 'x32', 6: 'x64'}[index]}
-                                    </button>}
-                                </span>
-                            })}
-                        </span>
-                    </div>
-                </div>
-
                 <div className="container theme-showcase" role="main">
+                    <h3 onClick={() => {
+                        console.log(this.state);
+                    }}>Appulse Battle Simulator</h3>
                     <div className="row">
-                        <div className="col-sm-3 flex-container-column">
-                            <h3><button className={(_.sum(_.values(this.state.player_fleet)) > 0 || true ? 'btn btn-danger' : 'btn btn-danger disabled')}
-                                        onClick={() => {
-                                            let battle = this.state.in_battle_fleets;
-                                            battle[this.state.player_name] = {player: this.state.player_name, color: this.state.player_color, fleet: this.state.player_fleet};
-                                            this.setState({
-                                                battle_step: 'battle',
-                                                in_battle_fleets: battle,
-                                                player_fleet: [],
-                                            });
-                                        }}>Sent Ships to Battle</button>
-                            </h3>
+                        <div className="col-sm-4 flex-container-column">
                             <h3>Points: {this.state.points}/32</h3>
 
                             {_.map(shop, (item, key) =>
@@ -207,48 +165,47 @@ class App extends Component {
                                     :
                                     <div key={key} className="panel">
                                         <OverlayTrigger delay={150} placement="right" overlay={tooltip(this.state, item)}>
-                                            <button
-                                                className={(item.cost ? this.isEnough(this.state, item.cost) ? '' : 'disabled' : '')}
-                                                onClick={() => { this.onClickWrapper(item); }}>
-                                                {item.name}
-                                            </button>
+                                            <div key={key} className="row slim">
+                                                <span className="col-sm-3 badge">{item.name}</span>
+                                                <div className="col-sm-2 slim">hp: {ships[key].hp}</div>
+                                                <div className="col-sm-2 slim">arm: {ships[key].armor}</div>
+                                                <div className="col-sm-3 slim">dmg: {ships[key].dmg}x{ships[key].rof}</div>
+                                                <span className="col-sm-2">
+                                                    <button className={(item.cost ? this.isEnough(this.state, item.cost) ? '' : 'disabled' : '')}
+                                                        onClick={() => { this.onClickWrapper(item); }}> Buy </button>
+                                                </span>
+                                            </div>
                                         </OverlayTrigger>
-
-                                        <div key={key} className="flex-container-row slim">
-                                            <div className="flex-element slim">hp: {ships[key].hp}</div>
-                                            <div className="flex-element slim">arm: {ships[key].armor}</div>
-                                            <div className="flex-element slim">dmg: {ships[key].dmg}x{ships[key].rof}</div>
-                                        </div>
                                     </div>
                             )}
                         </div>
-                        <div className="col-sm-6 flex-container-column">
-                            <div className="flex-element flex-container-row">
-                                <div className="flex-element">type</div>
-                                <div className="flex-element">hp</div>
-                                <div className="flex-element">armor</div>
-                                <div className="flex-element">dmg</div>
-                                <div className="flex-element">rof</div>
-                                <div className="flex-element">next shot</div>
-                            </div>
-
-                            <h4>On your base:</h4>
-                            { _.map(this.state.player_fleet, (ship, key) =>
-                                <div key={key} style={{backgroundColor: ship.color, opacity: (ship.hp > 0 ? 1 : 0.5)}} className="flex-element flex-container-row slim">
-                                    <div className="flex-element slim">{ship.type}</div>
-                                    <div className="flex-element slim">{ship.hp}</div>
-                                    <div className="flex-element slim">{ship.armor}</div>
-                                    <div className="flex-element slim">{ship.dmg}</div>
-                                    <div className="flex-element slim">{ship.rof}</div>
-                                    <div className="flex-element slim">{ship.fireAtFrame}</div>
+                        <div className="col-sm-5 flex-container-column">
+                            <div className="flex-container-column">
+                                <div className="flex-element flex-container-row">
+                                    <div className="flex-element">type</div>
+                                    <div className="flex-element">hp</div>
+                                    <div className="flex-element">armor</div>
+                                    <div className="flex-element">dmg</div>
+                                    <div className="flex-element">rof</div>
+                                    <div className="flex-element">next shot</div>
                                 </div>
-                            )}
 
-                            <h4>Fleets in battle</h4>
-                            { _.map(_.values(this.state.in_battle_fleets), (fleet, key) =>
-                                <div key={key}>
-                                    <h4>{fleet.player} fleet</h4>
-                                    {_.map(fleet.fleet, (ship, key) =>
+                                {this.state.player_fleet.length > 0? <div>
+                                    <h4>
+                                        <span> On your base </span>
+                                        <button className={(_.sum(_.values(this.state.player_fleet)) > 0 || true ? 'btn btn-danger' : 'btn btn-danger disabled')}
+                                                onClick={() => {
+                                                    let battle = this.state.in_battle_fleets;
+                                                    battle[this.state.player_name] = {player: this.state.player_name, color: this.state.player_color, fleet: sortFleet(this.state.player_fleet)};
+                                                    this.setState({
+                                                        battle_step: 'battle',
+                                                        in_battle_fleets: battle,
+                                                        player_fleet: [],
+                                                    });
+                                                }}> Sent Ships to Battle
+                                        </button>
+                                    </h4>
+                                    { _.map(this.state.player_fleet, (ship, key) =>
                                         <div key={key} style={{backgroundColor: ship.color, opacity: (ship.hp > 0 ? 1 : 0.5)}} className="flex-element flex-container-row slim">
                                             <div className="flex-element slim">{ship.type}</div>
                                             <div className="flex-element slim">{ship.hp}</div>
@@ -258,15 +215,62 @@ class App extends Component {
                                             <div className="flex-element slim">{ship.fireAtFrame}</div>
                                         </div>
                                     )}
-                                </div>
-                            )}
+                                </div> : ''}
+
+                                { _.map(_.values(this.state.in_battle_fleets), (fleet, key) =>
+                                    <div key={key}>
+                                        <h5>{fleet.player} fleet</h5>
+                                        {_.map(fleet.fleet, (ship, key) =>
+                                            <div key={key} style={{backgroundColor: ship.color, opacity: (ship.hp > 0 ? 1 : 0.5)}} className="flex-element flex-container-row slim">
+                                                <div className="flex-element slim">{ship.type}</div>
+                                                <div className="flex-element slim">{ship.hp}</div>
+                                                <div className="flex-element slim">{ship.armor}</div>
+                                                <div className="flex-element slim">{ship.dmg}</div>
+                                                <div className="flex-element slim">{ship.rof}</div>
+                                                <div className="flex-element slim">{ship.fireAtFrame}</div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="col-sm-3 flex-container-column">
+                            <div>
+                                <div className="flex-element flex-container-column">
+                                    <div className="flex-element">
+                                        <h4>Round: {this.state.tick} Turn: {this.state.frame} </h4>
+                                    </div>
+                                    <div className="flex-element">
+                                        <span onClick={() => {
+                                            if (this.state.game_paused) {
+                                                this.playGame();
+                                            } else {
+                                                this.pauseGame();
+                                            }
+                                        }}>
+                                            <span className={classNames('glyphicon', (this.state.game_paused ? 'glyphicon-play' : 'glyphicon-pause'))} style={{width: 28, height: 28}}></span>
+                                        </span>
+                                                        <span>
+                                            {[1, 4, 16, 64].map((speed, index) => {
+                                                return <span key={index}>
+                                                    {this.state.game_speed_multiplier === speed
+                                                        ? <button className="" style={{width: 42, height: 28}}><u>{{0: 'x1', 1: 'x4',  2: 'x16',  3: 'x64'}[index]}</u></button>
+                                                        : <button className="" style={{width: 42, height: 28}} onClick={() => {
+                                                        this.setGameSpeed(speed); }}>{{0: 'x1', 1: 'x4',  2: 'x16',  3: 'x64'}[index]}
+                                                    </button>}
+                                                </span>
+                                            })}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
                             { _.map(this.state.messages, (message, key) =>
                                 <div key={key} style={{background: message.background}} className="flex-element">
                                     {message.text}
                                 </div>
                             )}
+                            </div>
                         </div>
                     </div>
                 </div>

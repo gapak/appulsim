@@ -1,7 +1,8 @@
 
 import _ from 'lodash';
 
-import {getFleets, getBattle, getRandomFleet, getRendomBattle} from '../game/fleets';
+// getFleets, getBattle, getRandomFleet, getRendomBattle,
+import {generateSingleEnemyFleet} from '../game/fleets';
 
 const default_state = {
 
@@ -28,6 +29,6 @@ const default_state = {
 
 export const getDefaultState = () => {
     let state = _.cloneDeep(default_state);
-    state.in_battle_fleets = getRendomBattle(); //getBattle();
+    state.in_battle_fleets['Enemy'] = generateSingleEnemyFleet(); //getRendomBattle(); //getBattle();
     return state;
 };
