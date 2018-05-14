@@ -104,7 +104,7 @@ export const generateSingleEnemyFleet = () => {
 
 
 export const sortFleet = (fleet) => {
-    return _.orderBy(fleet, ['cost', 'dmg'], ['desc', 'desc']);
+    return _.orderBy(fleet, ['cost', 'dmg', 'rof', 'armor', 'hp'], ['desc', 'desc', 'desc', 'desc', 'desc']);
 };
 
 
