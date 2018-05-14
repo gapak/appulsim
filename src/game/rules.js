@@ -12,20 +12,20 @@ export const rules = {
 
             _.forEach(_.keys(state.in_battle_fleets), (fleet_id) => {
 
-                state.in_battle_fleets[fleet_id].fleet = _.filter(state.in_battle_fleets[fleet_id].fleet, (ship) => { return ship.hp > 0; });
+                state.in_battle_fleets[fleet_id].ships = _.filter(state.in_battle_fleets[fleet_id].ships, (ship) => { return ship.hp > 0; });
 
-                _.forEach(_.keys(state.in_battle_fleets[fleet_id].fleet), (ship_id) => {
-                    state.in_battle_fleets[fleet_id].fleet[ship_id].fireAtFrame = state.frame + _.random(0, 59);
+                _.forEach(_.keys(state.in_battle_fleets[fleet_id].ships), (ship_id) => {
+                    state.in_battle_fleets[fleet_id].ships[ship_id].fireAtFrame = state.frame + _.random(0, 59);
                 });
 
-                if (state.in_battle_fleets[fleet_id].fleet.length < 1) {
+                if (state.in_battle_fleets[fleet_id].ships.length < 1) {
                     delete state.in_battle_fleets[fleet_id];
                 }
             });
 
             if (_.keys(state.in_battle_fleets).length === 1) {
                 let winner_fleet = _.sample(state.in_battle_fleets);
-                let points = _.sumBy(winner_fleet.fleet, function(ship) { return ship.hp > 0 ? ship.points : 0; });
+                let points = _.sumBy(winner_fleet.ships, function(ship) { return ship.hp > 0 ? ship.cost : 0; });
 
                 state.messages.unshift({
                     background: "white",
@@ -43,7 +43,7 @@ export const rules = {
             
             _.forEach(_.keys(state.in_battle_fleets), (fleet_id) => {
                 let fleet = state.in_battle_fleets[fleet_id];
-                ships_list = ships_list.concat(_.filter(fleet.fleet, function(ship) { return (ship.fireAtFrame === state.frame && ship.hp > 0); }));
+                ships_list = ships_list.concat(_.filter(fleet.ships, function(ship) { return (ship.fireAtFrame === state.frame && ship.hp > 0); }));
             });
 
             let ships_order = _.shuffle(ships_list);
@@ -52,8 +52,8 @@ export const rules = {
 
             ships_order.forEach((ship, bad_id) => {
                 let player_id = ship.player;
-                let ship_id = _.indexOf(state.in_battle_fleets[player_id].fleet, ship);
-                state.in_battle_fleets[player_id].fleet[ship_id].fireAtFrame = false;
+                let ship_id = _.indexOf(state.in_battle_fleets[player_id].ships, ship);
+                state.in_battle_fleets[player_id].ships[ship_id].fireAtFrame = false;
                 if (ship.hp < 1) return false;
 
                 for (let i = 0; i < ship.rof; i++) {
@@ -61,13 +61,13 @@ export const rules = {
 
                     if (target !== false) {
                         let opponent_id = target.player;
-                        let target_id = _.indexOf(state.in_battle_fleets[opponent_id].fleet, target);
+                        let target_id = _.indexOf(state.in_battle_fleets[opponent_id].ships, target);
                      //   console.log(target);
                         let dmg = ship.dmg - target.armor;
-                        state.in_battle_fleets[opponent_id].fleet[target_id].hp -= dmg;
+                        state.in_battle_fleets[opponent_id].ships[target_id].hp -= dmg;
                         state.messages.unshift({
-                            background: "linear-gradient(to right, " + state.in_battle_fleets[player_id].fleet[ship_id].color + " , " + state.in_battle_fleets[opponent_id].color + ")",
-                            text: ship.type + " shot to " + state.in_battle_fleets[opponent_id].fleet[target_id].type + " and deal " + dmg});
+                            background: "linear-gradient(to right, " + state.in_battle_fleets[player_id].ships[ship_id].color + " , " + state.in_battle_fleets[opponent_id].color + ")",
+                            text: ship.type + " shot to " + state.in_battle_fleets[opponent_id].ships[target_id].type + " and deal " + dmg});
                     }
                 }
 
@@ -80,7 +80,7 @@ export const rules = {
 
 
 function findTarget(state, player) {
-    let fleets_list = _.filter(_.values(state.in_battle_fleets), function(fleet) { return _.filter(fleet.fleet, (ship) =>  { return (ship.player !== player && ship.hp > 0); }).length > 0; });
+    let fleets_list = _.filter(_.values(state.in_battle_fleets), function(fleet) { return _.filter(fleet.ships, (ship) =>  { return (ship.player !== player && ship.hp > 0); }).length > 0; });
 
   //  console.log("findTarget", player, fleets_list, state.in_battle_fleets);
 
@@ -90,8 +90,8 @@ function findTarget(state, player) {
 
     let fleet = _.sample(fleets_list);// state.in_battle_fleets[fleet_id];
 
-    _.forEach(_.keys(fleet.fleet), (ship_id) => {
-        let ship = state.in_battle_fleets[fleet.player].fleet[ship_id];
+    _.forEach(_.keys(fleet.ships), (ship_id) => {
+        let ship = state.in_battle_fleets[fleet.player].ships[ship_id];
         if (ship.player !== player && ship.hp > 0) {
             targets.push(ship);
         }

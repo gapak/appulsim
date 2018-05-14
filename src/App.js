@@ -197,7 +197,7 @@ class App extends Component {
                                         <button className={(_.sum(_.values(this.state.player_fleet)) > 0 || true ? 'btn btn-danger' : 'btn btn-danger disabled')}
                                                 onClick={() => {
                                                     let battle = this.state.in_battle_fleets;
-                                                    battle[this.state.player_name] = {player: this.state.player_name, color: this.state.player_color, fleet: sortFleet(this.state.player_fleet)};
+                                                    battle[this.state.player_name] = {player: this.state.player_name, color: this.state.player_color, ships: sortFleet(this.state.player_fleet)};
                                                     this.setState({
                                                         in_battle_fleets: battle,
                                                         player_fleet: [],
@@ -220,7 +220,7 @@ class App extends Component {
                                 { _.map(_.values(this.state.in_battle_fleets), (fleet, key) =>
                                     <div key={key}>
                                         <h5>{fleet.player} fleet</h5>
-                                        {_.map(fleet.fleet, (ship, key) =>
+                                        {_.map(fleet.ships, (ship, key) =>
                                             <div key={key} style={{backgroundColor: ship.color, opacity: (ship.hp > 0 ? 1 : 0.5)}} className="flex-element flex-container-row slim">
                                                 <div className="flex-element slim">{ship.type}</div>
                                                 <div className="flex-element slim">{ship.hp}</div>
