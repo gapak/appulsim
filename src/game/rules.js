@@ -1,29 +1,43 @@
 
 import _ from 'lodash';
 
+import {default_points} from '../game/default_state';
+
 export const rules = {
     matrix_show: {onFrame: (state) => { state.matrix_show = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15); return state; }},
 
     battle: {
         onTick: (state) => {
-            if (state.battle_step !== 'battle') return state;
-
-        //    console.log('battle tick', state.in_battle_fleets);
+            if (_.keys(state.in_battle_fleets).length < 2) return state;
 
             _.forEach(_.keys(state.in_battle_fleets), (fleet_id) => {
-                let fleet = state.in_battle_fleets[fleet_id];
-             //   console.log(fleet_id, fleet);
-                _.forEach(_.keys(fleet.fleet), (ship_id) => {
-                    let ship = state.in_battle_fleets[fleet_id].fleet[ship_id];
-              //     console.log(fleet_id, ship_id, ship);
-                    state.in_battle_fleets[fleet_id].fleet[ship_id].fireAtFrame = ship.hp > 0 ? state.frame + _.random(0, 59) : false;
+
+                state.in_battle_fleets[fleet_id].fleet = _.filter(state.in_battle_fleets[fleet_id].fleet, (ship) => { return ship.hp > 0; });
+
+                _.forEach(_.keys(state.in_battle_fleets[fleet_id].fleet), (ship_id) => {
+                    state.in_battle_fleets[fleet_id].fleet[ship_id].fireAtFrame = state.frame + _.random(0, 59);
                 });
+
+                if (state.in_battle_fleets[fleet_id].fleet.length < 1) {
+                    delete state.in_battle_fleets[fleet_id];
+                }
             });
+
+            if (_.keys(state.in_battle_fleets).length === 1) {
+                let winner_fleet = _.sample(state.in_battle_fleets);
+                let points = _.sumBy(winner_fleet.fleet, function(ship) { return ship.hp > 0 ? ship.points : 0; });
+
+                state.messages.unshift({
+                    background: "white",
+                    text: 'Battle End! Winner: ' + winner_fleet.player + ' with ' + points + " points (" + points * 100/default_points + "%)."});
+                return state;
+            }
+
             return state;
         },
 
         onFrame: (state) => {
-            if (state.battle_step !== 'battle') return state;
+            if (state.in_battle_fleets.length < 2) return state;
 
             let ships_list = [];
             
@@ -45,17 +59,7 @@ export const rules = {
                 for (let i = 0; i < ship.rof; i++) {
                     let target = findTarget(state, ship.player);
 
-                    if (target === false) {
-                        state.battle_step = 'end';
-
-                        let points = _.sumBy(state.in_battle_fleets[player_id].fleet, function(ship) { return ship.hp > 0 ? ship.points : 0; });
-
-                        state.messages.unshift({
-                            background: "white",
-                            text: 'Battle End! Winner: ' + ship.player + ' with ' + points + " points (" + points * 100/32 + "%)."});
-                        return state;
-                    }
-                    else {
+                    if (target !== false) {
                         let opponent_id = target.player;
                         let target_id = _.indexOf(state.in_battle_fleets[opponent_id].fleet, target);
                      //   console.log(target);

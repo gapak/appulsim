@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
-import Footer from './footer.js'
 
 import './css/App.css';
 
 import {game_name} from './game/app_config';
-import {getDefaultState} from './game/default_state';
+import {getDefaultState, default_points, setDefaultPoints} from './game/default_state';
 import {frame} from './game/frame';
 import {tick} from './game/tick';
 
@@ -152,12 +151,14 @@ class App extends Component {
         return (
             <div className="App">
                 <div className="container theme-showcase" role="main">
-                    <h3 onClick={() => {
-                        console.log(this.state);
-                    }}>Appulse Battle Simulator</h3>
+                    <h4>
+                        <span onClick={() => { console.log(this.state); }}> Appulse Battle Simulator </span>
+                        <a className="btn btn-warning" onClick={this.newGame} title='Hard Reset For Developers'> New game </a>
+                        <a className="btn btn-warning" onClick={() => { setDefaultPoints(prompt('How many points?', default_points)); this.newGame(); }} title='Hard Reset For Developers'> More points </a>
+                    </h4>
                     <div className="row">
                         <div className="col-sm-4 flex-container-column">
-                            <h3>Points: {this.state.points}/32</h3>
+                            <h3>Points: {this.state.points}/{default_points}</h3>
 
                             {_.map(shop, (item, key) =>
                                 (item.locked && item.locked(this.state))
@@ -198,7 +199,6 @@ class App extends Component {
                                                     let battle = this.state.in_battle_fleets;
                                                     battle[this.state.player_name] = {player: this.state.player_name, color: this.state.player_color, fleet: sortFleet(this.state.player_fleet)};
                                                     this.setState({
-                                                        battle_step: 'battle',
                                                         in_battle_fleets: battle,
                                                         player_fleet: [],
                                                     });
@@ -274,7 +274,6 @@ class App extends Component {
                         </div>
                     </div>
                 </div>
-            <Footer newGame={this.newGame}/>
             </div>
         );
     }
