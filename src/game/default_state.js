@@ -14,7 +14,7 @@ const default_state = {
     matrix_show: '',
 
     player_name: "ThePlayer",
-    player_color: "#fafafa",
+    player_color: "#111111",
     points: default_points,
 
     player_fleet: [],

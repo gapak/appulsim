@@ -1,6 +1,6 @@
 
 import _ from 'lodash';
-import {ships, getShip} from '../game/ships';
+import {ships, getShip, allowed_ships} from '../game/ships';
 import {default_points} from '../game/default_state';
 
 export const fleets = [
@@ -86,10 +86,14 @@ export const getRendomBattle = () => {
 };
 
 export const generateSingleEnemyFleet = () => {
-    let fleet = {player: 'Enemy', color: '#'+_.random(42, 99)+''+_.random(42, 99)+''+_.random(42, 99), ships: []};
+    let fleet = {player: 'Enemy', color: '#'+_.random(11, 99)+''+_.random(11, 99)+''+_.random(11, 99), ships: []};
 
-    let ships_list = _.filter(_.keys(ships), (ship) => { return _.random(1, 5) !== 1; });
+    let ships_list = _.filter(_.keys(ships), (ship) => { return (allowed_ships[ship]) } );
+    //ships_list = _.filter(ships_list, (ship) => {
+    //    return ships_list.length === 1 ? true : _.random(1, 1 + _.keys(ships).length - ships_list.length) !== 1; } );
     let points = default_points;
+
+    console.log(ships_list);
 
     while(points > 0) {
         let ship_key = _.sample(ships_list);

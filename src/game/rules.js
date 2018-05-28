@@ -15,7 +15,9 @@ export const rules = {
                 state.in_battle_fleets[fleet_id].ships = _.filter(state.in_battle_fleets[fleet_id].ships, (ship) => { return ship.hp > 0; });
 
                 _.forEach(_.keys(state.in_battle_fleets[fleet_id].ships), (ship_id) => {
-                    state.in_battle_fleets[fleet_id].ships[ship_id].fireAtFrame = state.frame + _.random(0, 59);
+                    let fire_at = state.frame + Math.floor(_.random(59 - (59 * state.in_battle_fleets[fleet_id].ships[ship_id].speed), 59));
+                    //let fire_at = state.frame + _.random(0, 59);
+                    state.in_battle_fleets[fleet_id].ships[ship_id].fireAtFrame = fire_at;
                 });
 
                 if (state.in_battle_fleets[fleet_id].ships.length < 1) {
@@ -28,7 +30,7 @@ export const rules = {
                 let points = _.sumBy(winner_fleet.ships, function(ship) { return ship.hp > 0 ? ship.cost : 0; });
 
                 state.messages.unshift({
-                    background: "white",
+                    background: winner_fleet.color,
                     text: 'Battle End! Winner: ' + winner_fleet.player + ' with ' + points + " points (" + points * 100/default_points + "%)."});
                 return state;
             }
@@ -67,7 +69,7 @@ export const rules = {
                         state.in_battle_fleets[opponent_id].ships[target_id].hp -= dmg;
                         state.messages.unshift({
                             background: "linear-gradient(to right, " + state.in_battle_fleets[player_id].ships[ship_id].color + " , " + state.in_battle_fleets[opponent_id].color + ")",
-                            text: ship.type + " shot to " + state.in_battle_fleets[opponent_id].ships[target_id].type + " and deal " + dmg});
+                            text: ship.type + " shot " + dmg + " to " + state.in_battle_fleets[opponent_id].ships[target_id].type});
                     }
                 }
 
