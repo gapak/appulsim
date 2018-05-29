@@ -3,18 +3,20 @@ import _ from 'lodash';
 
 
 export const ships = { // new slow battles
-    frigate:       {cost: 1, speed: 0.9, hp: 9,    armor: 0, dmg: 5,  rof: 1}, // Light
+    satellite:     {cost: 1, speed: 0.1, hp: 15,   armor: 0, dmg: 0,  rof: 0},
 
-    destroyer:     {cost: 2, speed: 0.7, hp: 13,   armor: 1, dmg: 4,  rof: 3}, // Rapid Fire
+    frigate:       {cost: 1, speed: 0.9, hp: 9,    armor: 0, dmg: 5,  rof: 1}, // Speed
 
-    cruiser:       {cost: 4, speed: 0.5, hp: 42,   armor: 2, dmg: 6,  rof: 2}, // HP & Armor
-    dreadnought:   {cost: 4, speed: 0.3, hp: 34,   armor: 3, dmg: 12, rof: 1}, // Big Gun & Armor
+    destroyer:     {cost: 2, speed: 0.7, hp: 13,   armor: 1, dmg: 4,  rof: 4}, // Rapid Fire
 
-    battlecruiser: {cost: 8, speed: 0.6, hp: 92,   armor: 2, dmg: 10, rof: 2}, // Big Gun
-    battleship:    {cost: 8, speed: 0.2, hp: 98,   armor: 3, dmg: 6,  rof: 3}, // Armor
-    carrier:       {cost: 8, speed: 0.4, hp: 120,  armor: 1, dmg: 5,  rof: 4}, // Rapid Fire & HP
+    cruiser:       {cost: 4, speed: 0.8, hp: 34,   armor: 2, dmg: 5,  rof: 3}, // HP & Armor & Speed
+    dreadnought:   {cost: 4, speed: 0.3, hp: 42,   armor: 3, dmg: 9,  rof: 3}, // Big Gun & Heavy Armor
 
-    titan:        {cost: 16, speed: 0.1, hp: 318,  armor: 1, dmg: 13, rof: 2}, // Big Gun & HP
+    battlecruiser: {cost: 8, speed: 0.6, hp: 86,   armor: 2, dmg: 8,  rof: 4}, // Big Gun & Speed
+    battleship:    {cost: 8, speed: 0.4, hp: 118,  armor: 3, dmg: 4,  rof: 8}, // Heavy Armor
+    carrier:       {cost: 8, speed: 0.5, hp: 144,  armor: 1, dmg: 5,  rof: 6}, // Rapid Fire & HP
+
+    titan:        {cost: 16, speed: 0.2, hp: 486,  armor: 1, dmg: 11, rof: 6}, // Big Gun & HP
 
 
     /*
@@ -29,6 +31,8 @@ export const ships = { // new slow battles
 };
 
 export const allowed_ships = {
+    /*
+     */
     frigate: true,
     destroyer: true,
     cruiser: true,
@@ -42,16 +46,21 @@ export const allowed_ships = {
 let ships_count = 0;
 let sum_dmg = 0;
 let sum_armor = 0;
+let sum_speed = 0;
 _.each(ships, (ship) => {
-    ships_count += (16 / ship.cost);
-    sum_dmg += ship.dmg * (16 / ship.cost);
-    sum_armor += ship.armor * (16 / ship.cost);
+    let count = 16 / ship.cost;
+    ships_count += count;
+    sum_dmg += ship.dmg * count;
+    sum_armor += ship.armor * count;
+    sum_speed += ship.speed * count;
 });
 export const avg_dmg = sum_dmg / ships_count;
 export const avg_armor = sum_armor / ships_count;
+export const avg_speed = sum_speed / ships_count;
 //export const avg_dmg = _.sumBy(_.values(ships), 'dmg') / _.keys(ships).length;
 console.log('avg_dmg:', avg_dmg);
 console.log('avg_armor:', avg_armor);
+console.log('avg_speed:', avg_speed);
 
 export const getShip = (ship_name, fleet) => {
     let ship = _.cloneDeep(ships[ship_name]);

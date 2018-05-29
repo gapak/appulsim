@@ -6,6 +6,14 @@ import {default_points} from '../game/default_state';
 export const rules = {
     matrix_show: {onFrame: (state) => { state.matrix_show = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15); return state; }},
 
+    solar: {
+        onTick: (state) => {
+            let satellites_count = 0;
+
+            return state;
+        }
+    },
+
     battle: {
         onTick: (state) => {
             if (_.keys(state.in_battle_fleets).length < 2) return state;
@@ -65,11 +73,23 @@ export const rules = {
                         let opponent_id = target.player;
                         let target_id = _.indexOf(state.in_battle_fleets[opponent_id].ships, target);
                      //   console.log(target);
-                        let dmg = ship.dmg - target.armor;
-                        state.in_battle_fleets[opponent_id].ships[target_id].hp -= dmg;
-                        state.messages.unshift({
-                            background: "linear-gradient(to right, " + state.in_battle_fleets[player_id].ships[ship_id].color + " , " + state.in_battle_fleets[opponent_id].color + ")",
-                            text: ship.type + " shot " + dmg + " to " + state.in_battle_fleets[opponent_id].ships[target_id].type});
+                        let transversal_velocity = state.in_battle_fleets[player_id].ships[ship_id].speed / state.in_battle_fleets[opponent_id].ships[target_id].speed;
+                        //let velocity_mod =  (transversal_velocity + 1) / 2;
+                        let roll = _.random(1, Math.floor(100 * transversal_velocity));
+
+                        if (roll > _.random(1, 50)) {
+                            let dmg = ship.dmg - target.armor;
+                            state.in_battle_fleets[opponent_id].ships[target_id].hp -= dmg;
+                            state.messages.unshift({
+                                background: "linear-gradient(to right, " + state.in_battle_fleets[player_id].ships[ship_id].color + " , " + state.in_battle_fleets[opponent_id].color + ")",
+                                text: ship.type + " shot " + dmg + " to " + state.in_battle_fleets[opponent_id].ships[target_id].type});
+                        }
+                        else {
+                            state.messages.unshift({
+                                background: "transparent",
+                                text: ship.type + " miss to " + state.in_battle_fleets[opponent_id].ships[target_id].type});
+                        }
+
                     }
                 }
 

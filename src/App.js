@@ -10,7 +10,7 @@ import {getDefaultState, default_points, setDefaultPoints} from './game/default_
 import {frame} from './game/frame';
 import {tick} from './game/tick';
 
-import {ships, avg_dmg, avg_armor} from './game/ships';
+import {ships, avg_dmg, avg_armor, avg_speed} from './game/ships';
 import {sortFleet} from './game/fleets';
 import {shop} from './game/shop';
 
@@ -130,9 +130,11 @@ class App extends Component {
 
     render() {
 
-        const xhp = ship => Math.pow(ship.hp * Math.pow(1 + (1 / avg_dmg * ship.armor), (1 + 0.01 * ship.hp)), 1.01) / ship.cost;
-        const ehp = ship => ship.hp * (1 + (1.15 / avg_dmg) * ship.armor) / ship.cost;
-        const dpr = ship => (ship.dmg - avg_armor) * ship.rof / ship.cost;
+        const speedBonus = ship => ((ship.speed / avg_speed) + 1) / 2;
+
+        //const xhp = ship => Math.pow(ship.hp * Math.pow(1 + (1 / avg_dmg * ship.armor), (1 + 0.01 * ship.hp)), 1.01) / ship.cost;
+        const ehp = ship => speedBonus(ship) * ship.hp * (1 + (1.15 / avg_dmg) * ship.armor) / ship.cost;
+        const dpr = ship => speedBonus(ship) * (ship.dmg - avg_armor) * ship.rof / ship.cost;
 
 
 
@@ -157,6 +159,7 @@ class App extends Component {
             <h5>{fleet.player} fleet</h5>
             <div className="flex-element flex-container-row">
                 <div className="flex-element">type</div>
+                <div className="flex-element">speed</div>
                 <div className="flex-element">hp</div>
                 <div className="flex-element">armor</div>
                 <div className="flex-element">dmg</div>
@@ -166,6 +169,7 @@ class App extends Component {
             {_.map(fleet.ships, (ship, key) =>
                 <div key={key} className="flex-element flex-container-row slim">
                     <div className="flex-element slim" style={{backgroundColor: ship.color, opacity: (ship.hp > 0 ? 1 : 0.4)}}>{ship.type}</div>
+                    <div className="flex-element slim">{ship.speed}</div>
                     <div className="flex-element slim">{ship.hp}</div>
                     <div className="flex-element slim">{ship.armor}</div>
                     <div className="flex-element slim">{ship.dmg}</div>
@@ -197,10 +201,12 @@ class App extends Component {
         const shop_subcomponent = <div className="col-sm-6 flex-container-column">
             <h3>Points: {this.state.points}/{default_points}</h3>
             <div className="row slim">
-                <div className="col-sm-2 slim">hp</div>
-                <div className="col-sm-2 slim">arm</div>
-                <div className="col-sm-2 slim">dmg</div>
-                <div className="col-sm-2 slim">rof</div>
+                <div className="col-sm-1 slim">speed</div>
+                <div className="col-sm-1 slim">hp</div>
+                <div className="col-sm-1 slim">arm</div>
+                <div className="col-sm-1 slim">dmg</div>
+                <div className="col-sm-1 slim">rof</div>
+                <div className="col-sm-3 slim"></div>
                 <div className="col-sm-1 slim">ehp</div>
                 <div className="col-sm-1 slim">dpr</div>
                 <div className="col-sm-1 slim">ratio</div>
@@ -215,18 +221,20 @@ class App extends Component {
                         <OverlayTrigger delay={150} placement="right" overlay={tooltip(this.state, item)}>
                             <div key={key} className="slim">
                                 <div className="row slim">
-                                    <span className="col-sm-3 badge">{item.name}</span>
-                                    <div className="col-sm-2 slim">speed: {ships[key].speed}</div>
+                                    <span className="col-sm-5 badge">{item.name}</span>
                                     <span className="col-sm-3">
-                                                            <button className={(item.cost ? this.isEnough(this.state, item.cost) ? '' : 'disabled' : '')}
-                                                                    onClick={() => { this.onClickWrapper(item); }}> Buy for {item.cost.points} </button>
-                                                        </span>
+                                        <button className={(item.cost ? this.isEnough(this.state, item.cost) ? '' : 'disabled' : '')}
+                                            onClick={() => { this.onClickWrapper(item); }}> Buy for {item.cost.points}
+                                        </button>
+                                    </span>
                                 </div>
                                 <div className="row slim">
-                                    <div className="col-sm-2 slim">{ships[key].hp}</div>
-                                    <div className="col-sm-2 slim">{ships[key].armor}</div>
-                                    <div className="col-sm-2 slim">{ships[key].dmg}</div>
-                                    <div className="col-sm-2 slim">{ships[key].rof}</div>
+                                    <div className="col-sm-1 slim">{ships[key].speed}</div>
+                                    <div className="col-sm-1 slim">{ships[key].hp}</div>
+                                    <div className="col-sm-1 slim">{ships[key].armor}</div>
+                                    <div className="col-sm-1 slim">{ships[key].dmg}</div>
+                                    <div className="col-sm-1 slim">{ships[key].rof}</div>
+                                    <div className="col-sm-3 slim"></div>
                                     <div className="col-sm-1 slim">{ehp(ships[key]).toFixed(2)}</div>
                                     <div className="col-sm-1 slim">{dpr(ships[key]).toFixed(2)}</div>
                                     <div className="col-sm-1 slim">{(ehp(ships[key])/dpr(ships[key])).toFixed(2)}</div>
