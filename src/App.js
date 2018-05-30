@@ -216,7 +216,7 @@ class App extends Component {
                 {badge(this.state, data.type, <div className="flex-element badge">type</div>)}
                 {badge(this.state, data.speed, <div className="flex-element badge">speed</div>)}
                 {badge(this.state, data.hp, <div className="flex-element badge">hp</div>)}
-                {badge(this.state, data.arm, <div className="flex-element badge">armo</div>)}
+                {badge(this.state, data.arm, <div className="flex-element badge">arm</div>)}
                 {badge(this.state, data.dmg, <div className="flex-element badge">dmg</div>)}
                 {badge(this.state, data.rof, <div className="flex-element badge">rof</div>)}
                 {badge(this.state, data.next, <div className="flex-element badge">next</div>)}
