@@ -13,6 +13,7 @@ import {tick} from './game/tick';
 import {ships, avg_dmg, avg_armor, avg_speed} from './game/ships';
 import {sortFleet} from './game/fleets';
 import {shop} from './game/shop';
+import {data} from './game/data';
 
 
 class App extends Component {
@@ -137,34 +138,39 @@ class App extends Component {
         const dpr = ship => speedBonus(ship) * (ship.dmg - avg_armor) * ship.rof / ship.cost;
 
 
+        const badge = (state, item, child) => <OverlayTrigger delay={150} placement="bottom" overlay={tooltip(state, item)}>{child}</OverlayTrigger>;
+
 
         const tooltip = (state, item) =>
             <Tooltip id="tooltip">
-                <div className="col-lg-12 infoBar">
-                    {item.name}
-                    <br />
-                    {item.text ? item.text : ''}
-                </div>
-
-                {_.map(item.cost, (value, resource_key) => {
-                    return <div className="row" key={resource_key}>
-                        <div className="col-sm-6 infoBar">{resource_key}</div>
-                        <div className="col-sm-6 infoBar">{value} / {state[resource_key]}</div>
+                <div>
+                    <div className="col-lg-12 infoBar">
+                        <strong>{item.name}</strong>
+                        <br />
+                        <p>{item.text ? item.text : ''}</p>
+                        <strong>{item.text2 ? item.text2 : ''}</strong>
                     </div>
-                })}
+
+                    {_.map(item.cost, (value, resource_key) => {
+                        return <div className="row" key={resource_key}>
+                            <div className="col-sm-6 infoBar">{resource_key}</div>
+                            <div className="col-sm-6 infoBar">{value} / {state[resource_key]}</div>
+                        </div>
+                    })}
+                </div>
             </Tooltip>;
 
 
         const fleets_generator = (fleet, key) => <div className="col-sm-6" key={key}>
             <h5>{fleet.player} fleet</h5>
             <div className="flex-element flex-container-row">
-                <div className="flex-element">type</div>
-                <div className="flex-element">speed</div>
-                <div className="flex-element">hp</div>
-                <div className="flex-element">armor</div>
-                <div className="flex-element">dmg</div>
-                <div className="flex-element">rof</div>
-                <div className="flex-element">next shot</div>
+                {badge(this.state, data.type, <div className="flex-element badge">type</div>)}
+                {badge(this.state, data.speed, <div className="flex-element badge">speed</div>)}
+                {badge(this.state, data.hp, <div className="flex-element badge">hp</div>)}
+                {badge(this.state, data.arm, <div className="flex-element badge">armo</div>)}
+                {badge(this.state, data.dmg, <div className="flex-element badge">dmg</div>)}
+                {badge(this.state, data.rof, <div className="flex-element badge">rof</div>)}
+                {badge(this.state, data.next, <div className="flex-element badge">next</div>)}
             </div>
             {_.map(fleet.ships, (ship, key) =>
                 <div key={key} className="flex-element flex-container-row slim">
@@ -200,17 +206,17 @@ class App extends Component {
 
         const shop_subcomponent = <div className="col-sm-6 flex-container-column">
             <h3>Points: {this.state.points}/{default_points}</h3>
-            <div className="row slim">
-                <div className="col-sm-1 slim">speed</div>
-                <div className="col-sm-1 slim">hp</div>
-                <div className="col-sm-1 slim">arm</div>
-                <div className="col-sm-1 slim">dmg</div>
-                <div className="col-sm-1 slim">rof</div>
+            <div className="row">
+                {badge(this.state, data.speed, <div className="col-sm-1 slim badge">speed</div>)}
+                <div className="col-sm-1 slim badge">{badge(this.state, data.hp, <span>hp</span>)}</div>
+                <div className="col-sm-1 slim badge">{badge(this.state, data.arm, <span>arm</span>)}</div>
+                <div className="col-sm-1 slim badge">{badge(this.state, data.dmg, <span>dmg</span>)}</div>
+                <div className="col-sm-1 slim badge">{badge(this.state, data.rof, <span>rof</span>)}</div>
                 <div className="col-sm-3 slim"></div>
-                <div className="col-sm-1 slim">ehp</div>
-                <div className="col-sm-1 slim">dpr</div>
-                <div className="col-sm-1 slim">ratio</div>
-                <div className="col-sm-1 slim">mult</div>
+                <div className="col-sm-1 slim badge">{badge(this.state, data.ehp, <span>ehp</span>)}</div>
+                <div className="col-sm-1 slim badge">{badge(this.state, data.dpr, <span>dpr</span>)}</div>
+                <div className="col-sm-1 slim badge">{badge(this.state, data.ratio, <span>ratio</span>)}</div>
+                <div className="col-sm-1 slim badge">{badge(this.state, data.mult, <span>mult</span>)}</div>
             </div>
 
             {_.map(shop, (item, key) =>
@@ -218,13 +224,13 @@ class App extends Component {
                     ? ''
                     :
                     <div key={key} className="panel">
-                        <OverlayTrigger delay={150} placement="right" overlay={tooltip(this.state, item)}>
-                            <div key={key} className="slim">
+                        {badge(this.state, item,
+                            <div className="slim">
                                 <div className="row slim">
                                     <span className="col-sm-5 badge">{item.name}</span>
-                                    <span className="col-sm-3">
+                                    <span className="col-sm-4">
                                         <button className={(item.cost ? this.isEnough(this.state, item.cost) ? '' : 'disabled' : '')}
-                                            onClick={() => { this.onClickWrapper(item); }}> Buy for {item.cost.points}
+                                            onClick={() => { this.onClickWrapper(item); }}> Buy for {item.cost.points} {item.cost.points === 1 ? 'point' : 'points'}
                                         </button>
                                     </span>
                                 </div>
@@ -237,11 +243,11 @@ class App extends Component {
                                     <div className="col-sm-3 slim"></div>
                                     <div className="col-sm-1 slim">{ehp(ships[key]).toFixed(2)}</div>
                                     <div className="col-sm-1 slim">{dpr(ships[key]).toFixed(2)}</div>
-                                    <div className="col-sm-1 slim">{(ehp(ships[key])/dpr(ships[key])).toFixed(2)}</div>
-                                    <div className="col-sm-1 slim">{(ehp(ships[key])*dpr(ships[key])).toFixed(2)}</div>
+                                    <div className="col-sm-1 slim">{(dpr(ships[key])/ehp(ships[key])).toFixed(2)}</div>
+                                    <div className="col-sm-1 slim">{(dpr(ships[key])*ehp(ships[key])).toFixed(2)}</div>
                                 </div>
                             </div>
-                        </OverlayTrigger>
+                        )}
                     </div>
             )}
         </div>;

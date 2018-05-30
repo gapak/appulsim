@@ -20,8 +20,10 @@ button {
   background-color: transparent;
 }
 
+
 #tooltip > .tooltip-inner {
   width: 300px;
+  min-height: 180px;
   background-color: #EFEEEE;
   color: black;
   border: 1px solid #BDBDBD;
