@@ -4,7 +4,7 @@ import {ships, getShip} from '../game/ships';
 
 export const shop = {
     satellite:        {cost: {points: ships.satellite.cost}, name: "satellite",        onClick: (state) => { state.in_battle_fleets[state.player_name].ships.push(getShip('satellite', {player: state.player_name, color: state.player_color})); return state; },
-        text: "Солнечные спуткики вырабатываю 1 point каждый раунд.",
+        text: "Солнечные спуткики вырабатываю 0.1 point каждый раунд.",
         text2: "Легкая цель для медленных кораблей с высоким уроном."},
     frigate:        {cost: {points: ships.frigate.cost}, name: "frigate",        onClick: (state) => { state.in_battle_fleets[state.player_name].ships.push(getShip('frigate', {player: state.player_name, color: state.player_color})); return state; },
         text: "Скоростные фрегаты - отличные перехватчики и корабли поддержки.",
