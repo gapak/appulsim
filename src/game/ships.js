@@ -13,7 +13,7 @@ export const ships = { // new slow battles
     dreadnought:   {cost: 4, speed: 0.3, hp: 45,   armor: 3, dmg: 8,  rof: 3}, // Big Gun & Heavy Armor
 
     battlecruiser: {cost: 8, speed: 0.7, hp: 86,   armor: 2, dmg: 9,  rof: 3}, // Big Gun & Speed
-    battleship:    {cost: 8, speed: 0.4, hp: 133,  armor: 3, dmg: 4,  rof: 7}, // Heavy Armor
+    battleship:    {cost: 8, speed: 0.4, hp: 148,  armor: 3, dmg: 6,  rof: 4}, // Heavy Armor
     carrier:       {cost: 8, speed: 0.5, hp: 144,  armor: 1, dmg: 5,  rof: 6}, // Rapid Fire & HP
 
     titan:        {cost: 16, speed: 0.2, hp: 486,  armor: 1, dmg: 11, rof: 6}, // Big Gun & HP

@@ -23,7 +23,7 @@ export const shop = {
         text2: "Тяжелая броня, высокая скорость, высокие повреждения, большие пушки."},
     battleship:     {cost: {points: ships.battleship.cost}, name: "battleship",     onClick: (state) => { state.in_battle_fleets[state.player_name].ships.push(getShip('battleship', {player: state.player_name, color: state.player_color})); return state; },
         text: "Венец военной техники, усыпанный пушками и броней.",
-        text2: "Большой размер, очень тяжелая броня, скорострельный огонь."},
+        text2: "Очень большой размер, очень тяжелая броня."},
     carrier:    {cost: {points: ships.carrier.cost}, name: "carrier",    onClick: (state) => { state.in_battle_fleets[state.player_name].ships.push(getShip('carrier', {player: state.player_name, color: state.player_color})); return state; },
         text: "Платформа-носитель, с которой взлетает шесть фрегатов.",
         text2: "Очень большой размер, высокие повреждения и скорострельный огонь."},
