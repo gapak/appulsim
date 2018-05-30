@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import Footer from './footer.js'
 
 import './css/App.css';
 
@@ -80,6 +81,7 @@ class App extends Component {
 
     //    localStorage.setItem(game_name+"_app_state", JSON.stringify(state));
         this.setState(state);
+        if (state.game_end) this.pauseGame();
     }
 
     tick(initial_state) {
@@ -160,50 +162,6 @@ class App extends Component {
                 </div>
             </Tooltip>;
 
-
-        const fleets_generator = (fleet, key) => <div className="col-sm-6" key={key}>
-            <h5>{fleet.player} fleet</h5>
-            <div className="flex-element flex-container-row">
-                {badge(this.state, data.type, <div className="flex-element badge">type</div>)}
-                {badge(this.state, data.speed, <div className="flex-element badge">speed</div>)}
-                {badge(this.state, data.hp, <div className="flex-element badge">hp</div>)}
-                {badge(this.state, data.arm, <div className="flex-element badge">armo</div>)}
-                {badge(this.state, data.dmg, <div className="flex-element badge">dmg</div>)}
-                {badge(this.state, data.rof, <div className="flex-element badge">rof</div>)}
-                {badge(this.state, data.next, <div className="flex-element badge">next</div>)}
-            </div>
-            {_.map(fleet.ships, (ship, key) =>
-                <div key={key} className="flex-element flex-container-row slim">
-                    <div className="flex-element slim" style={{backgroundColor: ship.color, opacity: (ship.hp > 0 ? 1 : 0.4)}}>{ship.type}</div>
-                    <div className="flex-element slim">{ship.speed}</div>
-                    <div className="flex-element slim">{ship.hp}</div>
-                    <div className="flex-element slim">{ship.armor}</div>
-                    <div className="flex-element slim">{ship.dmg}</div>
-                    <div className="flex-element slim">{ship.rof}</div>
-                    <div className="flex-element slim">{ship.fireAtFrame}</div>
-                </div>
-            )}
-        </div>;
-
-
-        const player_fleet_subcomponent = <div>
-            <h4>
-                <span> On your base </span>
-                <button className={((_.sum(_.values(this.state.player_fleet)) > 0 && this.state.points === 0) || true ? 'btn btn-danger' : 'btn btn-danger disabled')}
-                        onClick={() => {
-                            let battle = this.state.in_battle_fleets;
-                            battle[this.state.player_name] = {player: this.state.player_name, color: this.state.player_color, ships: sortFleet(this.state.player_fleet)};
-                            this.setState({
-                                in_battle_fleets: battle,
-                                player_fleet: [],
-                            });
-                        }}> Sent Ships to Battle
-                </button>
-            </h4>
-            {fleets_generator({player: this.state.player_name, ships: this.state.player_fleet}, 'player')}
-        </div>;
-
-
         const shop_subcomponent = <div className="col-sm-6 flex-container-column">
             <h3>Points: {this.state.points}/{default_points}</h3>
             <div className="row">
@@ -252,7 +210,56 @@ class App extends Component {
             )}
         </div>;
 
-        const all_fleets_subcomponent = _.map(_.values(this.state.in_battle_fleets), fleets_generator);
+        const fleets_generator = (fleet, player, header) => <div className="col-sm-6" key={player}>
+            {header}
+            <div className="flex-element flex-container-row">
+                {badge(this.state, data.type, <div className="flex-element badge">type</div>)}
+                {badge(this.state, data.speed, <div className="flex-element badge">speed</div>)}
+                {badge(this.state, data.hp, <div className="flex-element badge">hp</div>)}
+                {badge(this.state, data.arm, <div className="flex-element badge">armo</div>)}
+                {badge(this.state, data.dmg, <div className="flex-element badge">dmg</div>)}
+                {badge(this.state, data.rof, <div className="flex-element badge">rof</div>)}
+                {badge(this.state, data.next, <div className="flex-element badge">next</div>)}
+            </div>
+            {_.map(fleet.ships, (ship, key) =>
+                <div key={key} className="flex-element flex-container-row slim">
+                    <div className="flex-element slim" style={{backgroundColor: ship.color, opacity: (ship.hp > 0 ? 1 : 0.4)}}>{ship.type}</div>
+                    <div className="flex-element slim">{ship.speed}</div>
+                    <div className="flex-element slim">{ship.hp}</div>
+                    <div className="flex-element slim">{ship.armor}</div>
+                    <div className="flex-element slim">{ship.dmg}</div>
+                    <div className="flex-element slim">{ship.rof}</div>
+                    <div className="flex-element slim">{ship.fireAtFrame}</div>
+                </div>
+            )}
+        </div>;
+
+
+        const player_fleet_subcomponent = <div>
+            <h4>
+                <span> On your base </span>
+                <button className={((_.sum(_.values(this.state.player_fleet)) > 0 && this.state.points === 0) || true ? 'btn btn-danger' : 'btn btn-danger disabled')}
+                        onClick={() => {
+                            let battle = this.state.in_battle_fleets;
+                            battle[this.state.player_name] = {player: this.state.player_name, color: this.state.player_color, ships: sortFleet(this.state.player_fleet)};
+                            this.setState({
+                                in_battle_fleets: battle,
+                                player_fleet: [],
+                            });
+                        }}> Sent Ships to Battle
+                </button>
+            </h4>
+            {fleets_generator({player: this.state.player_name, ships: this.state.player_fleet}, 'player')}
+        </div>;
+
+
+
+        const fleet_headers = {
+            space:  fleet => <h5>{fleet.player} fleet arrival in {fleet.flight_timer - this.state.tick + 1} minutes</h5>,
+            battle: fleet => <h5>{fleet.player} fleet</h5>,
+        };
+        const in_battle_fleets_subcomponent = _.map(_.values(this.state.in_battle_fleets), (fleet, player) => fleets_generator(fleet, player, fleet_headers.battle(fleet)));
+        const in_space_fleets_subcomponent = _.map(_.values(this.state.in_space_fleets), (fleet, player) => fleets_generator(fleet, player, fleet_headers.space(fleet)));
 
 
         return (
@@ -260,21 +267,26 @@ class App extends Component {
                 <div className="fat" role="main">
                     <h4 className="fat">
                         <span onClick={() => { console.log(this.state); }}> Appulse Battle Simulator </span>
-                        <a className="btn btn-warning" onClick={this.newGame} title='Hard Reset For Developers'> New game </a>
-                        <a className="btn btn-warning" onClick={() => { setDefaultPoints(prompt('How many points?', default_points)); this.newGame(); }} title='Hard Reset For Developers'> More points </a>
+                        <a className="btn btn-warning hidden" onClick={this.newGame} title='Hard Reset For Developers'> New game </a>
+                        <a className="btn btn-warning hidden" onClick={() => { setDefaultPoints(prompt('How many points?', default_points)); this.newGame(); }} title='Hard Reset For Developers'> More points </a>
                     </h4>
                     <div className="row fat">
-                        <div className="col-sm-10 col">
-
-                            {this.state.points > 0 ? shop_subcomponent : '' }
-
-                            <div className="col">
-
-                                {this.state.player_fleet.length > 0 ? player_fleet_subcomponent : ''}
-
-                                {all_fleets_subcomponent}
+                        {!this.state.game_end ?
+                            <div className="col-sm-10 col">
+                                {shop_subcomponent}
+                                <div className="col">
+                                    <h3>Fleets</h3>
+                                    {this.state.player_fleet.length > 0 ? player_fleet_subcomponent : ''}
+                                    {in_battle_fleets_subcomponent}
+                                    {in_space_fleets_subcomponent}
+                                </div>
                             </div>
-                        </div>
+                            :
+                            <div className="col-sm-10 col">
+                                <h2>Game End! Score: {this.state.game_end_score}</h2>
+                                <h3><a className="btn btn-warning" onClick={this.newGame} title='Try One More Time'> New Game </a></h3>
+                            </div>
+                        }
 
                         <div className="col-sm-2 flex-container-column">
                             <div>
@@ -317,6 +329,8 @@ class App extends Component {
                         </div>
                     </div>
                 </div>
+
+                <Footer newGame={this.newGame}/>
             </div>
         );
     }

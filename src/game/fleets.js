@@ -86,7 +86,7 @@ export const getRendomBattle = () => {
 };
 
 export const generateSingleEnemyFleet = () => {
-    let fleet = {player: 'Enemy', color: '#'+_.random(11, 99)+''+_.random(11, 99)+''+_.random(11, 99), ships: []};
+    let fleet = {player: 'Enemy', flight_timer: 0, color: '#'+_.random(11, 99)+''+_.random(11, 99)+''+_.random(11, 99), ships: []};
 
     let ships_list = _.filter(_.keys(ships), (ship) => { return (allowed_ships[ship]) } );
     //ships_list = _.filter(ships_list, (ship) => {
@@ -107,8 +107,38 @@ export const generateSingleEnemyFleet = () => {
 };
 
 
-export const sortFleet = (fleet) => {
-    return _.orderBy(fleet, ['cost', 'dmg', 'rof', 'armor', 'hp'], ['desc', 'desc', 'desc', 'desc', 'desc']);
+
+export const generateNextWave = (n) => {
+
+    let fleet = {player: 'Enemy_'+_.random(100, 999), flight_timer: 0, color: '#'+_.random(11, 99)+''+_.random(11, 99)+''+_.random(11, 99), ships: []};
+
+    let ships_list = _.filter(_.keys(ships), (ship) => { return (allowed_ships[ship]) } );
+    //ships_list = _.filter(ships_list, (ship) => {
+    //    return ships_list.length === 1 ? true : _.random(1, 1 + _.keys(ships).length - ships_list.length) !== 1; } );
+    let points = n;
+
+    console.log(ships_list);
+
+    while(points > 0) {
+        let ship_key = _.sample(ships_list);
+        if (ships[ship_key].cost <= points && _.random(1, Math.ceil(1 + ships[ship_key].cost/2)) === 1) {
+            points -= ships[ship_key].cost;
+            fleet.ships.push(getShip(ship_key, fleet));
+        }
+    }
+    fleet.ships = sortFleet(fleet.ships);
+    return fleet;
+};
+
+
+
+export const sortFleet = (ships) => {
+    return _.orderBy(ships, ['cost', 'dmg', 'rof', 'armor', 'hp'], ['desc', 'desc', 'desc', 'desc', 'desc']);
+};
+
+
+export const getFleetSpeed = (ships) => {
+    return _.min(_.map(ships, 'speed'));
 };
 
 
