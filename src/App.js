@@ -140,7 +140,7 @@ class App extends Component {
         const dpr = ship => speedBonus(ship) * (ship.dmg - avg_armor) * ship.rof / ship.cost;
 
 
-        const badge = (state, item, child) => <OverlayTrigger delay={150} placement="bottom" overlay={tooltip(state, item)}>{child}</OverlayTrigger>;
+        const badge = (state, item, child) => <OverlayTrigger delay={150} placement="right" overlay={tooltip(state, item)}>{child}</OverlayTrigger>;
 
 
         const tooltip = (state, item) =>

@@ -4,7 +4,7 @@ import {ships, getShip} from '../game/ships';
 
 export const shop = {
     satellite:        {cost: {points: ships.satellite.cost}, name: "satellite",        onClick: (state) => { state.in_battle_fleets[state.player_name].ships.push(getShip('satellite', {player: state.player_name, color: state.player_color})); return state; },
-        text: "Солнечные спуткики вырабатываю 0.1 point каждый раунд.",
+        text: "Солнечные спуткики вырабатываю 0.1 point каждый раунд, но не больше 1 в сумме.",
         text2: "Легкая цель для медленных кораблей с высоким уроном."},
     frigate:        {cost: {points: ships.frigate.cost}, name: "frigate",        onClick: (state) => { state.in_battle_fleets[state.player_name].ships.push(getShip('frigate', {player: state.player_name, color: state.player_color})); return state; },
         text: "Скоростные фрегаты - отличные перехватчики и корабли поддержки.",
@@ -15,6 +15,9 @@ export const shop = {
     cruiser:      {cost: {points: ships.cruiser.cost}, name: "cruiser",    onClick: (state) => { state.in_battle_fleets[state.player_name].ships.push(getShip('cruiser', {player: state.player_name, color: state.player_color})); return state; },
         text: "Сбалансированный военный корабль, готовый к любой ситуации.",
         text2: "Тяжелая броня, высокая скорость, высокие повреждения, скорострельный огонь."},
+  //  cruiser2:      {cost: {points: ships.cruiser2.cost}, name: "cruiser2",    onClick: (state) => { state.in_battle_fleets[state.player_name].ships.push(getShip('cruiser2', {player: state.player_name, color: state.player_color})); return state; },
+  //      text: "Темная лошадка",
+  //      text2: "Необычный конфиг."},
     dreadnought:  {cost: {points: ships.dreadnought.cost}, name: "dreadnought",  onClick: (state) => { state.in_battle_fleets[state.player_name].ships.push(getShip('dreadnought', {player: state.player_name, color: state.player_color})); return state; },
         text: "Неповоротливый тяжело-бронированный корабль для позиционной войны.",
         text2: "Большой размер, очень тяжелая броня, большие пушки."},

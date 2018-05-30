@@ -16,7 +16,7 @@ export const rules = {
 
     passive: {
         onTick: (state) => {
-            if (state.points < 1) state.points += 0.1;
+            if (state.points < 1) state.points = (parseFloat(state.points) + 0.1).toFixed(1);
             return state;
         }
     },
@@ -24,11 +24,16 @@ export const rules = {
     solar: {
         onTick: (state) => {
             let satellites_count = _.filter(state.in_battle_fleets[state.player_name].ships, ['type', 'satellite']).length;
-            let energy_gen = satellites_count * 0.1;
+            let energy_gen_all = satellites_count * 0.1;
+            let energy_gen = Math.min(energy_gen_all, 1);
 
-            state.points = (state.points + energy_gen) < default_points
-                ? state.points + energy_gen
-                : default_points;
+            // console.log(satellites_count, energy_gen_all, energy_gen, state.points);
+
+            if (energy_gen > 0) {
+                state.points = (parseFloat(state.points) + energy_gen).toFixed(1) < default_points
+                    ? (parseFloat(state.points) + energy_gen).toFixed(1)
+                    : default_points;
+            }
 
             return state;
         }
@@ -77,6 +82,10 @@ export const rules = {
                 });
 
                 if (state.in_battle_fleets[fleet_id].ships.length < 1) {
+                    if (state.in_battle_fleets[fleet_id].player === state.player_name) {
+                        state.game_end = true;
+                        state.game_end_score = state.frame;
+                    }
                     delete state.in_battle_fleets[fleet_id];
                 }
             });
@@ -84,11 +93,6 @@ export const rules = {
             if (_.keys(state.in_battle_fleets).length === 1) {
                 let winner_fleet = _.sample(state.in_battle_fleets);
                 let points = _.sumBy(winner_fleet.ships, function(ship) { return ship.hp > 0 ? ship.cost : 0; });
-
-                if (winner_fleet.player !== state.player_name) {
-                    state.game_end = true;
-                    state.game_end_score = state.frame;
-                }
 
                 state.messages.unshift({
                     background: winner_fleet.color,

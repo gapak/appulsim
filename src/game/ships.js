@@ -3,20 +3,21 @@ import _ from 'lodash';
 
 
 export const ships = { // new slow battles
-    satellite:     {cost: 1, speed: 0.1, hp: 15,   armor: 0, dmg: 0,  rof: 0},
+    satellite:     {cost: 1, speed: 0.1, hp: 12,   armor: 0, dmg: 0,  rof: 0},
 
-    frigate:       {cost: 1, speed: 0.9, hp: 9,    armor: 0, dmg: 5,  rof: 1}, // Speed & High DPS
+    frigate:       {cost: 1, speed: 0.9, hp: 9,    armor: 0, dmg: 5,  rof: 1}, // High Speed & High DPS
 
     destroyer:     {cost: 2, speed: 0.8, hp: 14,   armor: 1, dmg: 4,  rof: 3}, // Speed & High DPS & Rapid Fire
 
-    cruiser:       {cost: 4, speed: 0.6, hp: 37,   armor: 2, dmg: 5,  rof: 4}, // Armor & Speed & High DPS & Rapid Fire
-    dreadnought:   {cost: 4, speed: 0.3, hp: 45,   armor: 3, dmg: 8,  rof: 3}, // HP & Heavy Armor & Big Gun
+    cruiser:       {cost: 4, speed: 0.6, hp: 36,   armor: 2, dmg: 5,  rof: 4}, // Armor & Speed & High DPS & Rapid Fire
+    //cruiser2:      {cost: 4, speed: 0.7, hp: 34,   armor: 2, dmg: 6,  rof: 3}, // Armor & High Speed
+    dreadnought:   {cost: 4, speed: 0.3, hp: 58,   armor: 3, dmg: 9,  rof: 2}, // HP & Heavy Armor & Big Gun
 
-    battlecruiser: {cost: 8, speed: 0.7, hp: 86,   armor: 2, dmg: 9,  rof: 3}, // Armor & Speed & High DPS & Big Gun
-    battleship:    {cost: 8, speed: 0.4, hp: 148,  armor: 3, dmg: 6,  rof: 4}, // HP & Heavy Armor
+    battlecruiser: {cost: 8, speed: 0.7, hp: 96,   armor: 2, dmg: 8,  rof: 3}, // Armor & Speed & High DPS & Big Gun
+    battleship:    {cost: 8, speed: 0.4, hp: 147,  armor: 3, dmg: 6,  rof: 4}, // HP & Heavy Armor
     carrier:       {cost: 8, speed: 0.5, hp: 144,  armor: 1, dmg: 5,  rof: 6}, // HP & High DPS & Rapid Fire
 
-    titan:        {cost: 16, speed: 0.2, hp: 486,  armor: 1, dmg: 11, rof: 6}, // HP & Big Gun
+    titan:        {cost: 16, speed: 0.2, hp: 472,  armor: 1, dmg: 11, rof: 6}, // HP & Big Gun
 
 
     /*

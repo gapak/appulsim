@@ -15,7 +15,7 @@ const default_state = {
 
     player_name: "ThePlayer",
     player_color: "#111111",
-    points: 3,
+    points: 3.0,
 
     player_fleet: [],
     in_battle_fleets: {},

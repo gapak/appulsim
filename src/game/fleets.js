@@ -107,12 +107,23 @@ export const generateSingleEnemyFleet = () => {
 };
 
 
+const genColor = () => '#'+_.random(11, 99)+''+_.random(11, 99)+''+_.random(11, 99);
+
+const enemies = {
+    elend: {name: "El'en Da'ar", color: genColor(), allowed_ships: {frigate: true, destroyer: true, cruiser: true, battlecruiser: true, carrier: true}},
+    caran: {name: 'Lacaran', color: genColor(),     allowed_ships: {frigate: true, destroyer: true, cruiser: true, battlecruiser: true, carrier: true}},
+    repub: {name: 'Republicon', color: genColor(),  allowed_ships: {frigate: true, dreadnought: true, battlecruiser: true, battleship: true, carrier: true, titan: true}},
+    malor: {name: 'Malor', color: genColor(),       allowed_ships: {frigate: true, destroyer: true, dreadnought: true, battleship: true, titan: true}},
+    domna: {name: 'Domnators', color: genColor(),   allowed_ships: {frigate: true, cruiser: true, dreadnought: true, battleship: true, titan: true}},
+};
+
 
 export const generateNextWave = (n) => {
+    let enemy = _.sample(enemies);
 
-    let fleet = {player: 'Enemy_'+_.random(100, 999), flight_timer: 0, color: '#'+_.random(11, 99)+''+_.random(11, 99)+''+_.random(11, 99), ships: []};
+    let fleet = {player: enemy.name, flight_timer: 0, color: enemy.color, ships: []};
 
-    let ships_list = _.filter(_.keys(ships), (ship) => { return (allowed_ships[ship]) } );
+    let ships_list = _.filter(_.keys(ships), (ship) => { return (enemy.allowed_ships[ship]) } );
     //ships_list = _.filter(ships_list, (ship) => {
     //    return ships_list.length === 1 ? true : _.random(1, 1 + _.keys(ships).length - ships_list.length) !== 1; } );
     let points = n;
